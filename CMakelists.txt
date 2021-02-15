@@ -1,0 +1,29 @@
+cmake_minimum_required(VERSION 3.13.0 FATAL_ERROR)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+project(Editor)
+
+set(Editor_VERSION_MAJOR 1)
+set(Editor_VERSION_MINOR 0)
+
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+add_executable(Editor)
+
+target_link_libraries(Editor Opengl32.lib)
+
+target_include_directories(Editor PRIVATE src)
+target_include_directories(Editor PRIVATE src/vendor)
+
+set_property(TARGET Editor PROPERTY CXX_STANDARD 17)
+
+# PLATFORM DEFINITIONS AND SETTINGS
+if (WIN32)
+target_compile_definitions(Editor PRIVATE PLATFORM_WINDOWS)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
+target_compile_definitions(Editor PRIVATE PLATFORM_WINDOWS)
+endif()
+
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Editor)
+
+add_subdirectory(src)
