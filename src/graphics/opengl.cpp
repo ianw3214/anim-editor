@@ -81,6 +81,30 @@ void IndexBuffer::unbind() const {
 //////////////////////////////////////////////////////////////////////////////
 // Shader
 //////////////////////////////////////////////////////////////////////////////
+#include "defaultShaders.hpp"
+Shader::Shader(DefaultShader shader)
+	: rendererID(0)
+{
+	std::string vertex;
+	std::string fragment;
+	if (shader == DefaultShader::BASIC)
+	{
+		vertex = basic_vertex;
+		fragment = basic_fragment;
+	}
+	if (shader == DefaultShader::TEXTURE)
+	{
+		vertex = basic_vertex;
+		fragment = basic_texture;
+	}
+	if (shader == DefaultShader::TILE)
+	{
+		vertex = basic_vertex;
+		fragment = tile_texture;
+	}
+	rendererID = createShaderProgram(vertex, fragment);
+}
+
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 	: rendererID(0)
 {
@@ -191,6 +215,11 @@ GLuint Shader::createShaderProgram(const std::string& vertexSource, const std::s
 	GLuint vertexShader = compileShader(GL_VERTEX_SHADER, vertexSource);
 	GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
 
+	glAttachShader(program, vertexShader);
+	glAttachShader(program, fragmentShader);
+	glLinkProgram(program);
+	glValidateProgram(program);
+
 	// TODO: assert that shaders were compiled successfully
 	GLint result;
 	glGetProgramiv(program, GL_LINK_STATUS, &result);
@@ -203,11 +232,6 @@ GLuint Shader::createShaderProgram(const std::string& vertexSource, const std::s
 			std::cout << "Program link failed:\n" << message << std::endl;
 		}
 	}
-
-	glAttachShader(program, vertexShader);
-	glAttachShader(program, fragmentShader);
-	glLinkProgram(program);
-	glValidateProgram(program);
 	
 	// TODO: Error handling
 

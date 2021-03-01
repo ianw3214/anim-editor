@@ -109,6 +109,13 @@ private:
 class Shader {
 ////////////////////////////////////////////////////////////////////
 public:
+	enum class DefaultShader
+	{
+		BASIC,
+		TEXTURE,
+		TILE
+	};
+	Shader(DefaultShader shader);
 	Shader(const std::string& vertexPath, const std::string& fragmentPath);
 	~Shader();
 
