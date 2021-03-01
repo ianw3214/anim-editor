@@ -5,7 +5,7 @@
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-#include "imgui-filebrowser/imfilebrowser.h"
+#include "imgui-filebrowser/ImGuiFileBrowser.h"
 
 #include <chrono>
 #include <string>
@@ -14,30 +14,60 @@
 
 // Global data
 // TODO: Actually store these variables somewhere
-ImGui::FileBrowser fileDialog;
-std::string temp;
+imgui_addons::ImGuiFileBrowser fileDialog;
+bool open = false;
+bool save = false;
+std::string curr_image;
+Texture* texture = nullptr;
 
 ///////////////////////////////////////////////////////////////////////
 // File management widget
 ///////////////////////////////////////////////////////////////////////
 void DrawFileWidget()
 {
-    ImGui::Begin("File", nullptr);
+    ImGui::Begin("File", nullptr, ImGuiWindowFlags_MenuBar);
 
-    if (ImGui::Button("open file dialog"))
+    if (ImGui::BeginMenuBar())
     {
-        fileDialog.Open();
+        if (ImGui::BeginMenu("File"))
+        {
+            if (ImGui::MenuItem("Open", "CTRL+O"))
+                open = true;
+            if (ImGui::MenuItem("Save", "CTRL+S"))
+                save = true;
+
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenuBar();
     }
 
-    fileDialog.Display();
-
-    if (fileDialog.HasSelected())
+    if (open)
     {
-        temp = "Selected filename" + fileDialog.GetSelected().string();
-        fileDialog.ClearSelected();
+        ImGui::OpenPopup("Open File");
+        open = false;
+    }
+    if (save)
+    {
+        ImGui::OpenPopup("Save File");
+        save = false;
     }
 
-    ImGui::Text(temp.c_str());
+    if (fileDialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, { 0, 0 }, ".png,.json"))
+    {
+        std::string file = fileDialog.selected_fn;     // Name of selected file
+        std::string path = fileDialog.selected_path;   // Name of selected directory
+        curr_image = file;
+        texture = new Texture(path);
+    }
+    if (fileDialog.showFileDialog("Save File", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE))
+    {
+        fileDialog.selected_fn;     // Name of selected file
+        fileDialog.selected_path;   // Name of selected path
+        fileDialog.ext;             // file extension
+        // ImGui::CloseCurrentPopup();
+    }
+
+    ImGui::Text(curr_image.c_str());
 
     ImGui::End();
 }
@@ -101,7 +131,15 @@ int main(int argc, char* argv[])
 
         Renderer::Clear();
 
+        // Draw the background .
         Renderer::DrawTiledQuad(0.0, 0.0, 1280.0, 720.0);
+
+        // Draw current texture if exists
+        if (texture)
+        {
+            // TODO: Properly scale texture rendering
+            Renderer::DrawQuad(0.0, 0.0, 1280.0, 720.0, texture);
+        }
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
