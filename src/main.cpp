@@ -5,11 +5,46 @@
 #include "imgui/imgui_impl_sdl.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+#include "imgui-filebrowser/imfilebrowser.h"
+
 #include <chrono>
 #include <string>
 
 #include "graphics/renderer.hpp"
 
+// Global data
+// TODO: Actually store these variables somewhere
+ImGui::FileBrowser fileDialog;
+std::string temp;
+
+///////////////////////////////////////////////////////////////////////
+// File management widget
+///////////////////////////////////////////////////////////////////////
+void DrawFileWidget()
+{
+    ImGui::Begin("File", nullptr);
+
+    if (ImGui::Button("open file dialog"))
+    {
+        fileDialog.Open();
+    }
+
+    fileDialog.Display();
+
+    if (fileDialog.HasSelected())
+    {
+        temp = "Selected filename" + fileDialog.GetSelected().string();
+        fileDialog.ClearSelected();
+    }
+
+    ImGui::Text(temp.c_str());
+
+    ImGui::End();
+}
+
+///////////////////////////////////////////////////////////////////////
+// Entry point
+///////////////////////////////////////////////////////////////////////
 #ifdef PLATFORM_WINDOWS
 #include <windows.h>
 INT WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, INT nCmdShow)
@@ -76,7 +111,7 @@ int main(int argc, char* argv[])
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         ImGui::ShowDemoWindow(nullptr);
 
-        Renderer::DrawLine(0.f, 0.f, 100.f, 100.f, {0.5, 0.5, 0.5});
+        DrawFileWidget();
 
         // Rendering
         ImGui::Render();

@@ -45,6 +45,5 @@ const char* tile_texture =
 "    float x_key = floor(mod(vScreenPos.x * 10.0, 2.0));"
 "    float y_key = floor(mod(vScreenPos.y * 8.0, 2.0));"
 "    colour = mod(x_key + y_key, 2.0) == 0 ? vec4(0.2, 0.2, 0.2, 1.0) : vec4(0.1, 0.1, 0.1, 1.0);"
-//"    colour = vec4(0.1, 0.1, 0.1, 1.0);"
 "}"
 ;
