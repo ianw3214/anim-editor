@@ -12,15 +12,15 @@
 
 #include "graphics/renderer.hpp"
 
+#include "viewer/spritesheetViewer.hpp"
+
 // Global data
 // TODO: Actually store these variables somewhere
 imgui_addons::ImGuiFileBrowser fileDialog;
 bool open = false;
 bool save = false;
 std::string curr_image;
-Texture* texture = nullptr;
-float width = 0.0;
-float height = 0.0;
+SpritesheetViewer spritesheetViewer;
 
 // Viewer data
 float x_offset = 0.0;
@@ -64,9 +64,7 @@ void DrawFileWidget()
         std::string file = fileDialog.selected_fn;     // Name of selected file
         std::string path = fileDialog.selected_path;   // Name of selected directory
         curr_image = file;
-        texture = new Texture(path);
-        width = texture->getWidth();
-        height = texture->getHeight();
+        spritesheetViewer.UpdateSprite(path);
     }
     if (fileDialog.showFileDialog("Save File", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE))
     {
@@ -136,28 +134,7 @@ int main(int argc, char* argv[])
             {
                 running = false;
             }
-            if (e.type == SDL_KEYDOWN)
-            {
-                if (e.key.keysym.sym == SDLK_SPACE)
-                {
-                    panning = true;
-                }
-            }
-            if (e.type == SDL_KEYUP)
-            {
-                if (e.key.keysym.sym == SDLK_SPACE)
-                {
-                    panning = false;
-                }
-            }
-            if (e.type == SDL_MOUSEMOTION)
-            {
-                if (panning)
-                {
-                    x_offset += static_cast<float>(e.motion.xrel);
-                    y_offset += static_cast<float>(e.motion.yrel);
-                }
-            }
+            spritesheetViewer.HandleEvent(e);
         }
 
         Renderer::Clear();
@@ -165,11 +142,7 @@ int main(int argc, char* argv[])
         // Draw the background .
         Renderer::DrawTiledQuad(0.0, 0.0, 1280.0, 720.0);
 
-        // Draw current texture if exists
-        if (texture)
-        {
-            Renderer::DrawQuad(x_offset, y_offset, width, height, texture);
-        }
+        spritesheetViewer.Render();
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -196,7 +169,6 @@ int main(int argc, char* argv[])
     SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
     SDL_Quit();
-
 
     return 0;
 }
