@@ -1,3 +1,6 @@
 src/vendor/
 build/
 .vscode/
+
+# Testing image files
+*.png

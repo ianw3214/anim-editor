@@ -19,6 +19,13 @@ bool open = false;
 bool save = false;
 std::string curr_image;
 Texture* texture = nullptr;
+float width = 0.0;
+float height = 0.0;
+
+// Viewer data
+float x_offset = 0.0;
+float y_offset = 0.0;
+bool panning = false;
 
 ///////////////////////////////////////////////////////////////////////
 // File management widget
@@ -58,6 +65,8 @@ void DrawFileWidget()
         std::string path = fileDialog.selected_path;   // Name of selected directory
         curr_image = file;
         texture = new Texture(path);
+        width = texture->getWidth();
+        height = texture->getHeight();
     }
     if (fileDialog.showFileDialog("Save File", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE))
     {
@@ -127,6 +136,28 @@ int main(int argc, char* argv[])
             {
                 running = false;
             }
+            if (e.type == SDL_KEYDOWN)
+            {
+                if (e.key.keysym.sym == SDLK_SPACE)
+                {
+                    panning = true;
+                }
+            }
+            if (e.type == SDL_KEYUP)
+            {
+                if (e.key.keysym.sym == SDLK_SPACE)
+                {
+                    panning = false;
+                }
+            }
+            if (e.type == SDL_MOUSEMOTION)
+            {
+                if (panning)
+                {
+                    x_offset += static_cast<float>(e.motion.xrel);
+                    y_offset += static_cast<float>(e.motion.yrel);
+                }
+            }
         }
 
         Renderer::Clear();
@@ -137,8 +168,7 @@ int main(int argc, char* argv[])
         // Draw current texture if exists
         if (texture)
         {
-            // TODO: Properly scale texture rendering
-            Renderer::DrawQuad(0.0, 0.0, 1280.0, 720.0, texture);
+            Renderer::DrawQuad(x_offset, y_offset, width, height, texture);
         }
 
         // Start the Dear ImGui frame

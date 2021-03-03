@@ -9,11 +9,12 @@ const char * basic_vertex =
 "out vec4 vScreenPos;"
 "out vec2 vTexCoord;"
 "void main() {"
-"    float x = mix(-1.0, 1.0, position.x / u_screenWidth);"
-"    float y = mix(-1.0, 1.0, position.y / u_screenHeight);"
+"    float x = mix(-1.0,  1.0, position.x / u_screenWidth);"
+"    float y = mix( 1.0, -1.0, position.y / u_screenHeight);"
 "    gl_Position = vec4(x, y, 0.0, 1.0);"
 "    vScreenPos = vec4(x, y, 0.0, 1.0);"
-"    vTexCoord = texCoord;"
+// Invert y because y axis is positive in the downards direction
+"    vTexCoord = vec2(texCoord.x, 1.0 - texCoord.y);"
 "}"
 ;
 
