@@ -3,11 +3,24 @@
 #include "graphics/opengl.hpp"
 #include "graphics/renderer.hpp"
 
+#include "controller.hpp"
+
+SpritesheetViewer::SpritesheetViewer()
+    : m_currSpritesheetPath()
+    , m_texture()
+    , m_width()
+    , m_height()
+    , m_xOffset(0.0)
+    , m_yOffset(0.0)
+    , m_panning(false)
+{
+}
+
 void SpritesheetViewer::UpdateSprite(const std::string& path)
 {
 	m_texture = std::make_unique<Texture>(path);
-	m_width = m_texture->getWidth();
-	m_height = m_texture->getHeight();
+	m_width = static_cast<float>(m_texture->getWidth());
+	m_height = static_cast<float>(m_texture->getHeight());
 }
 
 bool SpritesheetViewer::HandleEvent(const SDL_Event& e)
@@ -42,9 +55,16 @@ bool SpritesheetViewer::HandleEvent(const SDL_Event& e)
 
 void SpritesheetViewer::Render()
 {
+    // Check to see if the sprite sheet has been changed
+    const std::string& newpath = Controller::GetCurrentSpritesheetPath();
+    if (m_currSpritesheetPath != newpath)
+    {
+        m_currSpritesheetPath = newpath;
+        UpdateSprite(newpath);
+    }
+
 	if (m_texture)
 	{
-		// Renderer::DrawQuad(x_offset, y_offset, width, height, texture);
 		Renderer::DrawQuad(m_xOffset, m_yOffset, m_width, m_height, m_texture.get());
 	}
 }

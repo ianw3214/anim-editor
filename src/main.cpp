@@ -12,6 +12,8 @@
 
 #include "graphics/renderer.hpp"
 
+#include "controller.hpp"
+
 #include "viewer/spritesheetViewer.hpp"
 
 // Global data
@@ -20,7 +22,6 @@ imgui_addons::ImGuiFileBrowser fileDialog;
 bool open = false;
 bool save = false;
 std::string curr_image;
-SpritesheetViewer spritesheetViewer;
 
 // Viewer data
 float x_offset = 0.0;
@@ -64,7 +65,7 @@ void DrawFileWidget()
         std::string file = fileDialog.selected_fn;     // Name of selected file
         std::string path = fileDialog.selected_path;   // Name of selected directory
         curr_image = file;
-        spritesheetViewer.UpdateSprite(path);
+        Controller::LoadFreshAnimDataFromImage(path, file);
     }
     if (fileDialog.showFileDialog("Save File", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE))
     {
@@ -119,6 +120,8 @@ int main(int argc, char* argv[])
     if (glewError != GLEW_OK) return 1;
 
     Renderer::Init();
+
+    SpritesheetViewer spritesheetViewer;
 
     double delta = 1 / 60.0;
     bool running = true;

@@ -9,7 +9,7 @@ class Texture;
 class SpritesheetViewer
 {
 public:
-	SpritesheetViewer() = default;
+	SpritesheetViewer();
 
 	void UpdateSprite(const std::string& path);
 
