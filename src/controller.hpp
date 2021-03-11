@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Representation of animation data in code
@@ -17,7 +18,7 @@ public:
 		std::string m_name;
 		uint16_t m_start;
 		uint16_t m_end;
-		// TODO: State transitions
+		std::unordered_map<std::string, State*> m_transitions;
 	};
 
 	std::string m_currSpritesheetPath;
