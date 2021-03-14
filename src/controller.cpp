@@ -15,3 +15,13 @@ const std::string& Controller::GetCurrentSpritesheetPath()
 {
 	return sAnimData.m_currSpritesheetPath;
 }
+
+uint16_t Controller::GetFrameWidth()
+{
+	return sAnimData.m_frameWidth;
+}
+
+uint16_t Controller::GetFrameHeight()
+{
+	return sAnimData.m_frameHeight;
+}

@@ -5,6 +5,8 @@
 
 #include "controller.hpp"
 
+#include <SDL2/SDL.h>
+
 SpritesheetViewer::SpritesheetViewer()
     : m_currSpritesheetPath()
     , m_texture()
@@ -63,8 +65,22 @@ void SpritesheetViewer::Render()
         UpdateSprite(newpath);
     }
 
+    // Draw the actual spritesheet texture
 	if (m_texture)
 	{
 		Renderer::DrawQuad(m_xOffset, m_yOffset, m_width, m_height, m_texture.get());
 	}
+
+    // Highlight the spritesheet frame that the mouse is hovering over
+    if (m_texture)
+    {
+        int mouse_x, mouse_y;
+        SDL_GetMouseState(&mouse_x, &mouse_y);
+        float x1 = ((mouse_x - (int)m_xOffset) / Controller::GetFrameWidth()) * Controller::GetFrameWidth() + m_xOffset;
+        float y1 = ((mouse_y - (int)m_yOffset) / Controller::GetFrameHeight()) * Controller::GetFrameHeight() + m_yOffset;
+        float x2 = ((mouse_x - (int)m_xOffset) / Controller::GetFrameWidth() + 1) * Controller::GetFrameWidth() + m_xOffset;
+        float y2 = ((mouse_y - (int)m_yOffset) / Controller::GetFrameHeight() + 1) * Controller::GetFrameHeight() + m_yOffset;
+        float lines[10] = { x1, y1, x1, y2, x2, y2, x2, y1, x1, y1 };
+        Renderer::DrawLineStrip(lines, 5, Colour{ 255.f, 255.f, 255.f });
+    }
 }

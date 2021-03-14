@@ -37,6 +37,9 @@ class Controller
 public:
 	static void LoadFreshAnimDataFromImage(const std::string& path, const std::string& file);
 	static const std::string& GetCurrentSpritesheetPath();
+
+	static uint16_t GetFrameWidth();
+	static uint16_t GetFrameHeight();
 private:
 	static AnimData sAnimData;
 };
