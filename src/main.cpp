@@ -81,6 +81,22 @@ void DrawFileWidget()
 }
 
 ///////////////////////////////////////////////////////////////////////
+// Anim properties widget
+///////////////////////////////////////////////////////////////////////
+void DrawPropertiesWidget()
+{
+    ImGui::Begin("Properties");
+
+    if (Controller::GetCurrentSpritesheetPath().size() > 0)
+    {
+        ImGui::InputScalar("Frame width", ImGuiDataType_::ImGuiDataType_U16, Controller::GetFrameWidthAddress());
+        ImGui::InputScalar("Frame height", ImGuiDataType_::ImGuiDataType_U16, Controller::GetFrameHeightAddress());
+    }
+
+    ImGui::End();
+}
+
+///////////////////////////////////////////////////////////////////////
 // Entry point
 ///////////////////////////////////////////////////////////////////////
 #ifdef PLATFORM_WINDOWS
@@ -142,7 +158,7 @@ int main(int argc, char* argv[])
 
         Renderer::Clear();
 
-        // Draw the background .
+        // Draw the background
         Renderer::DrawTiledQuad(0.0, 0.0, 1280.0, 720.0);
 
         spritesheetViewer.Render();
@@ -156,6 +172,7 @@ int main(int argc, char* argv[])
         ImGui::ShowDemoWindow(nullptr);
 
         DrawFileWidget();
+        DrawPropertiesWidget();
 
         // Rendering
         ImGui::Render();

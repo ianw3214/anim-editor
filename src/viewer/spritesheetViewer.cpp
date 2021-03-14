@@ -74,6 +74,7 @@ void SpritesheetViewer::Render()
     // Highlight the spritesheet frame that the mouse is hovering over
     if (m_texture)
     {
+        // TODO: Negative positions are weird
         int mouse_x, mouse_y;
         SDL_GetMouseState(&mouse_x, &mouse_y);
         float x1 = ((mouse_x - (int)m_xOffset) / Controller::GetFrameWidth()) * Controller::GetFrameWidth() + m_xOffset;

@@ -40,6 +40,10 @@ public:
 
 	static uint16_t GetFrameWidth();
 	static uint16_t GetFrameHeight();
+
+	// direct access to anim data properties for imgui
+	static uint16_t* GetFrameWidthAddress();
+	static uint16_t* GetFrameHeightAddress();
 private:
 	static AnimData sAnimData;
 };

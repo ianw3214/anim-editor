@@ -25,3 +25,13 @@ uint16_t Controller::GetFrameHeight()
 {
 	return sAnimData.m_frameHeight;
 }
+
+uint16_t* Controller::GetFrameWidthAddress()
+{
+	return &(sAnimData.m_frameWidth);
+}
+
+uint16_t* Controller::GetFrameHeightAddress()
+{
+	return &(sAnimData.m_frameHeight);
+}
