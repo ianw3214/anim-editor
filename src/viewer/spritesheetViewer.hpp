@@ -24,5 +24,6 @@ private:
 	// 'Camera' information
 	float m_xOffset;
 	float m_yOffset;
+	float m_scale;
 	bool m_panning;
 };
