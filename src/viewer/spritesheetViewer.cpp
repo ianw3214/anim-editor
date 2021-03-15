@@ -85,6 +85,24 @@ void SpritesheetViewer::Render()
 		Renderer::DrawQuad(m_xOffset, m_yOffset, m_width * m_scale, m_height * m_scale, m_texture.get());
 	}
 
+    // Draw animation blocks on the spritesheet
+    if (m_texture)
+    {
+        const int cols = m_texture->getWidth() / Controller::GetFrameWidth();
+        const int width = static_cast<int>(Controller::GetFrameWidth() * m_scale);
+        const int height = static_cast<int>(Controller::GetFrameHeight() * m_scale);
+        for (const AnimData::State& state : Controller::GetStates())
+        {
+            float x1 = (state.m_start % cols) * width + m_xOffset;
+            float y1 = (state.m_start / cols) * height + m_yOffset;
+            float x2 = (state.m_end % cols + 1) * width + m_xOffset;
+            float y2 = (state.m_end / cols + 1) * height + m_yOffset;
+            float lines[10] = { x1, y1, x1, y2, x2, y2, x2, y1, x1, y1 };
+            Renderer::DrawLineStrip(lines, 5, Colour{ 0.5f, 0.5f, 0.5f });
+        }
+    }
+
+
     // Highlight the spritesheet frame that the mouse is hovering over
     if (m_texture)
     {
@@ -97,6 +115,6 @@ void SpritesheetViewer::Render()
         float x2 = ((mouse_x - (int)m_xOffset) / width + 1) * width + m_xOffset;
         float y2 = ((mouse_y - (int)m_yOffset) / height + 1) * height + m_yOffset;
         float lines[10] = { x1, y1, x1, y2, x2, y2, x2, y1, x1, y1 };
-        Renderer::DrawLineStrip(lines, 5, Colour{ 255.f, 255.f, 255.f });
+        Renderer::DrawLineStrip(lines, 5, Colour{ 1.f, 1.f, 1.f });
     }
 }
