@@ -16,6 +16,10 @@
 
 #include "viewer/spritesheetViewer.hpp"
 
+#include "serialization/serializer.hpp"
+
+#include <windows.h>
+
 // Global data
 // TODO: Actually store these variables somewhere
 imgui_addons::ImGuiFileBrowser fileDialog;
@@ -72,7 +76,10 @@ void DrawFileWidget()
         fileDialog.selected_fn;     // Name of selected file
         fileDialog.selected_path;   // Name of selected path
         fileDialog.ext;             // file extension
-        // ImGui::CloseCurrentPopup();
+        // TODO: Move serializer initialization somewhere else
+        Serializer serializer;
+        // TODO: Verify file extension
+        serializer.WriteToFile(fileDialog.selected_path);
     }
 
     ImGui::Text(curr_image.c_str());
@@ -83,17 +90,30 @@ void DrawFileWidget()
 ///////////////////////////////////////////////////////////////////////
 // Anim properties widget
 ///////////////////////////////////////////////////////////////////////
-void DrawPropertiesWidget()
+void DrawPropertiesWidget(SpritesheetViewer& viewer)
 {
-    ImGui::Begin("Properties");
-
     if (Controller::GetCurrentSpritesheetPath().size() > 0)
     {
+        ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_MenuBar);
+
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::BeginMenu("States"))
+            {
+                if (ImGui::MenuItem("New", "CTRL+N"))
+                {
+                    viewer.StartNewBlock();
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
+        }
+
         ImGui::InputScalar("Frame width", ImGuiDataType_::ImGuiDataType_U16, Controller::GetFrameWidthAddress());
         ImGui::InputScalar("Frame height", ImGuiDataType_::ImGuiDataType_U16, Controller::GetFrameHeightAddress());
-    }
 
-    ImGui::End();
+        ImGui::End();
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -172,7 +192,7 @@ int main(int argc, char* argv[])
         ImGui::ShowDemoWindow(nullptr);
 
         DrawFileWidget();
-        DrawPropertiesWidget();
+        DrawPropertiesWidget(spritesheetViewer);
 
         // Rendering
         ImGui::Render();

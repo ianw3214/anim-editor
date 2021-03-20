@@ -12,6 +12,7 @@ public:
 	SpritesheetViewer();
 
 	void UpdateSprite(const std::string& path);
+	void StartNewBlock();
 
 	bool HandleEvent(const SDL_Event& e);
 	void Render();
@@ -26,4 +27,7 @@ private:
 	float m_yOffset;
 	float m_scale;
 	bool m_panning;
+
+	bool m_addNewBlock;
+	int m_newBlockStart;
 };

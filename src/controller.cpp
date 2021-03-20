@@ -33,6 +33,11 @@ const std::vector<AnimData::State>& Controller::GetStates()
 	return sAnimData.m_states;
 }
 
+void Controller::AddNewState(uint16_t start, uint16_t end, std::string name)
+{
+	sAnimData.m_states.push_back({ name, start, end });
+}
+
 uint16_t* Controller::GetFrameWidthAddress()
 {
 	return &(sAnimData.m_frameWidth);

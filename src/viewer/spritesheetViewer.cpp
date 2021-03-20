@@ -16,6 +16,8 @@ SpritesheetViewer::SpritesheetViewer()
     , m_yOffset(0.0)
     , m_scale(1.0)
     , m_panning(false)
+    , m_addNewBlock(false)
+    , m_newBlockStart(-1)
 {
 }
 
@@ -24,6 +26,11 @@ void SpritesheetViewer::UpdateSprite(const std::string& path)
 	m_texture = std::make_unique<Texture>(path);
 	m_width = static_cast<float>(m_texture->getWidth());
 	m_height = static_cast<float>(m_texture->getHeight());
+}
+
+void SpritesheetViewer::StartNewBlock()
+{
+    m_addNewBlock = true;
 }
 
 bool SpritesheetViewer::HandleEvent(const SDL_Event& e)
@@ -66,6 +73,30 @@ bool SpritesheetViewer::HandleEvent(const SDL_Event& e)
             m_scale /= 1.2f;
         }
     }
+    if (e.type == SDL_MOUSEBUTTONDOWN)
+    {
+        if (m_addNewBlock)
+        {
+            const int cols = m_texture->getWidth() / Controller::GetFrameWidth();
+            const int width = static_cast<int>(Controller::GetFrameWidth() * m_scale);
+            const int height = static_cast<int>(Controller::GetFrameHeight() * m_scale);
+            const int framex = (e.button.x - (int)m_xOffset) / width;
+            const int framey = (e.button.y - (int)m_yOffset) / height;
+            const int frameid = (framey * cols) + framex;
+            // Click to start the new block
+            if (m_newBlockStart < 0)
+            {
+                m_newBlockStart = frameid;
+            }
+            // Click to finalize added block
+            else
+            {
+                Controller::AddNewState(m_newBlockStart, frameid);
+                m_addNewBlock = false;
+                m_newBlockStart = -1;
+            }
+        }
+    }
     return false;
 }
 
@@ -93,6 +124,7 @@ void SpritesheetViewer::Render()
         const int height = static_cast<int>(Controller::GetFrameHeight() * m_scale);
         for (const AnimData::State& state : Controller::GetStates())
         {
+            // TODO: Handle blocks that span multiple lines
             float x1 = (state.m_start % cols) * width + m_xOffset;
             float y1 = (state.m_start / cols) * height + m_yOffset;
             float x2 = (state.m_end % cols + 1) * width + m_xOffset;
@@ -102,10 +134,15 @@ void SpritesheetViewer::Render()
         }
     }
 
-
     // Highlight the spritesheet frame that the mouse is hovering over
     if (m_texture)
     {
+        Colour colour = { 1.f, 1.f, 1.f };
+        if (m_addNewBlock)
+        {
+            colour = { 1.f, 0.f, 1.f };
+        }
+        const int cols = m_texture->getWidth() / Controller::GetFrameWidth();
         const int width = static_cast<int>(Controller::GetFrameWidth() * m_scale);
         const int height = static_cast<int>(Controller::GetFrameHeight() * m_scale);
         int mouse_x, mouse_y;
@@ -114,7 +151,12 @@ void SpritesheetViewer::Render()
         float y1 = ((mouse_y - (int)m_yOffset) / height) * height + m_yOffset;
         float x2 = ((mouse_x - (int)m_xOffset) / width + 1) * width + m_xOffset;
         float y2 = ((mouse_y - (int)m_yOffset) / height + 1) * height + m_yOffset;
+        if (m_addNewBlock && m_newBlockStart >= 0)
+        {
+            x1 = (m_newBlockStart % cols) * width + m_xOffset;
+            y1 = (m_newBlockStart / cols) * height + m_yOffset;
+        }
         float lines[10] = { x1, y1, x1, y2, x2, y2, x2, y1, x1, y1 };
-        Renderer::DrawLineStrip(lines, 5, Colour{ 1.f, 1.f, 1.f });
+        Renderer::DrawLineStrip(lines, 5, colour);
     }
 }

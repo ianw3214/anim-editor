@@ -42,6 +42,8 @@ public:
 	static uint16_t GetFrameHeight();
 	static const std::vector<AnimData::State>& GetStates();
 
+	static void AddNewState(uint16_t start, uint16_t end, std::string name = "");
+
 	// direct access to anim data properties for imgui
 	static uint16_t* GetFrameWidthAddress();
 	static uint16_t* GetFrameHeightAddress();
