@@ -2,6 +2,12 @@
 
 AnimData Controller::sAnimData;
 
+void Controller::LoadImage(const std::string& path, const std::string& file)
+{
+	sAnimData.m_currSpritesheetPath = path;
+	sAnimData.m_currSpritesheetFilename = file;
+}
+
 void Controller::LoadFreshAnimDataFromImage(const std::string& path, const std::string& file)
 {
 	sAnimData.m_currSpritesheetPath = path;
@@ -31,6 +37,16 @@ uint16_t Controller::GetFrameHeight()
 const std::vector<AnimData::State>& Controller::GetStates()
 {
 	return sAnimData.m_states;
+}
+
+void Controller::SetFrameWidth(uint16_t width)
+{
+	sAnimData.m_frameWidth = width;
+}
+
+void Controller::SetFrameHeight(uint16_t height)
+{
+	sAnimData.m_frameHeight = height;
 }
 
 void Controller::AddNewState(uint16_t start, uint16_t end, std::string name)

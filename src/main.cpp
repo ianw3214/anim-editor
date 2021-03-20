@@ -25,7 +25,6 @@
 imgui_addons::ImGuiFileBrowser fileDialog;
 bool open = false;
 bool save = false;
-std::string curr_image;
 
 // Viewer data
 float x_offset = 0.0;
@@ -66,10 +65,19 @@ void DrawFileWidget()
 
     if (fileDialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, { 0, 0 }, ".png,.json"))
     {
-        std::string file = fileDialog.selected_fn;     // Name of selected file
-        std::string path = fileDialog.selected_path;   // Name of selected directory
-        curr_image = file;
-        Controller::LoadFreshAnimDataFromImage(path, file);
+        std::string file = fileDialog.selected_fn;      // Name of selected file
+        std::string path = fileDialog.selected_path;    // Name of selected directory
+        std::string ext = fileDialog.ext;               // file extension
+        if (file.substr(file.size() - 3, 3) == "png")
+        {
+            Controller::LoadFreshAnimDataFromImage(path, file);
+        }
+        if (file.substr(file.size() - 4, 4) == "json")
+        {
+            // TODO: Move serializer initialization somewhere else
+            Serializer serializer;
+            serializer.ReadFromJSONFile(path);
+        }
     }
     if (fileDialog.showFileDialog("Save File", imgui_addons::ImGuiFileBrowser::DialogMode::SAVE))
     {
@@ -82,7 +90,7 @@ void DrawFileWidget()
         serializer.WriteToFile(fileDialog.selected_path);
     }
 
-    ImGui::Text(curr_image.c_str());
+    ImGui::Text(Controller::GetCurrentSpritesheetPath().c_str());
 
     ImGui::End();
 }

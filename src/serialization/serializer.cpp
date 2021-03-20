@@ -12,6 +12,29 @@ Serializer::Serializer()
 
 }
 
+bool Serializer::ReadFromJSONFile(const std::string& file)
+{
+	std::ifstream infile(file);
+	if (infile.is_open())
+	{
+		json input;
+		infile >> input;
+
+		Controller::LoadImage(input["path"], input["path"]);
+		Controller::SetFrameWidth(input["frame_width"]);
+		Controller::SetFrameHeight(input["frame_height"]);
+
+		for (const json& state : input["states"])
+		{
+			Controller::AddNewState(state["start"], state["end"], state["name"]);
+			// TODO: Add transitions
+		}
+
+		return true;
+	}
+	return false;
+}
+
 bool Serializer::WriteToFile(const std::string& file)
 {
 	std::ofstream outfile(file);

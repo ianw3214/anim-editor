@@ -35,6 +35,7 @@ public:
 class Controller
 {
 public:
+	static void LoadImage(const std::string& path, const std::string& file);
 	static void LoadFreshAnimDataFromImage(const std::string& path, const std::string& file);
 	static const std::string& GetCurrentSpritesheetPath();
 
@@ -42,6 +43,8 @@ public:
 	static uint16_t GetFrameHeight();
 	static const std::vector<AnimData::State>& GetStates();
 
+	static void SetFrameWidth(uint16_t width);
+	static void SetFrameHeight(uint16_t height);
 	static void AddNewState(uint16_t start, uint16_t end, std::string name = "");
 
 	// direct access to anim data properties for imgui
